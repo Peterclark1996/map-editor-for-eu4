@@ -1,25 +1,44 @@
-import { ProvinceColour } from "../types/ProvinceColour"
+import { State } from "../actions/reducer"
+import { Colour } from "../types/Colour"
 import classes from "./Inspector.module.scss"
 
 type InspectorProps = {
-    selectedProvinceColour: ProvinceColour | undefined
+    state: State
+    selectedProvinceColour: Colour | undefined
 }
 
-const Inspector = ({ selectedProvinceColour }: InspectorProps) => {
+const Inspector = ({ state, selectedProvinceColour }: InspectorProps) => {
 
-    const getProvinceColourTitle = () => {
+    const getContent = () => {
         if (selectedProvinceColour === undefined) return "No province selected"
+
+        const selectedProvince = state.provinces.find(p =>
+            p.colour.red === selectedProvinceColour.red &&
+            p.colour.green === selectedProvinceColour.green &&
+            p.colour.blue === selectedProvinceColour.blue
+        )
+        if (selectedProvince === undefined) return "Failed to find selected province"
+
         const colour = `rgb( ${selectedProvinceColour.red}, ${selectedProvinceColour.green}, ${selectedProvinceColour.blue} )`
         return (
-            <div className="d-flex align-items-center">
-                <div className={`${classes.colourBlock} me-2`} style={{ "backgroundColor": colour }} /><span>{colour}</span>
-            </div>
+            <>
+                <div className="d-flex align-items-center">
+                    <div className={`${classes.colourBlock} me-2`} style={{ "backgroundColor": colour }} />
+                    <span>{colour}</span>
+                </div>
+                <div>
+                    <span className="fw-bold">Id:</span> {selectedProvince.id}
+                </div>
+                <div>
+                    <span className="fw-bold">Province:</span> {selectedProvince.name}
+                </div>
+            </>
         )
     }
 
     return (
-        <div className={`${classes.container} d-flex justify-content-center p-2`}>
-            {getProvinceColourTitle()}
+        <div className={`${classes.container} d-flex flex-column justify-content-center align-items-center p-2`}>
+            {getContent()}
         </div>
     )
 }

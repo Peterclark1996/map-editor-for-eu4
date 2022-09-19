@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { ProvinceColour } from "../types/ProvinceColour"
+import { Colour } from "../types/Colour"
 import classes from "./Map.module.scss"
 
 const MAX_ZOOM = 17
@@ -7,7 +7,7 @@ const MIN_ZOOM = 0.1
 const SCROLL_SENSITIVITY = 0.001
 
 type MapProps = {
-    onProvinceSelected: (province: ProvinceColour) => void
+    onProvinceSelected: (province: Colour) => void
 }
 
 const Map = ({ onProvinceSelected }: MapProps) => {
