@@ -3,7 +3,7 @@ import classes from "./Info.module.scss"
 const Info = () => {
     return (
         <div className={`${classes.container} p-2`}>
-            Info
+            v0.0.1
         </div>
     )
 }

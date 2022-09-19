@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import { ProvinceColour } from "../types/ProvinceColour"
 import classes from "./Map.module.scss"
 
 const MAX_ZOOM = 17
 const MIN_ZOOM = 0.1
 const SCROLL_SENSITIVITY = 0.001
 
-const Map = () => {
+type MapProps = {
+    onProvinceSelected: (province: ProvinceColour) => void
+}
+
+const Map = ({ onProvinceSelected }: MapProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const backCanvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -52,12 +57,22 @@ const Map = () => {
     }, [])
 
     const onMouseDown = useCallback((e: MouseEvent) => {
+        const canvas = canvasRef.current
+        if (canvas === null) return
+        const ctx = canvas.getContext("2d")
+        if (ctx === null) return
+        const target = e.currentTarget as HTMLElement
+        if (target === null) return
+        const rect = target.getBoundingClientRect()
+        const point = ctx.getImageData(e.clientX - rect.left, e.clientY - rect.top, 1, 1).data
+        onProvinceSelected({ red: point[0], green: point[1], blue: point[2] })
+
         setIsDragging(true)
         setDragStart({
             x: e.clientX / cameraZoom - cameraOffset.x,
             y: e.clientY / cameraZoom - cameraOffset.y
         })
-    }, [cameraOffset.x, cameraOffset.y, cameraZoom])
+    }, [cameraOffset.x, cameraOffset.y, cameraZoom, onProvinceSelected])
 
     const onMouseUp = () => setIsDragging(false)
 

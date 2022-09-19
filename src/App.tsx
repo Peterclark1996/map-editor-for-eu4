@@ -4,15 +4,19 @@ import Map from "./components/Map"
 import classes from "./App.module.scss"
 import Tools from "./components/Tools"
 import Info from "./components/Info"
+import { useState } from "react"
+import { ProvinceColour } from "./types/ProvinceColour"
 
 const App = () => {
+    const [selectedProvinceColour, setSelectedProvinceColour] = useState<ProvinceColour | undefined>()
+
     return (
         <div className={`${classes.container} h-100`}>
             <Info />
             <Header />
             <Tools />
-            <Map />
-            <Inspector />
+            <Map onProvinceSelected={setSelectedProvinceColour} />
+            <Inspector selectedProvinceColour={selectedProvinceColour} />
         </div>
     )
 }
