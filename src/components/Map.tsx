@@ -91,20 +91,18 @@ const Map = () => {
 
         canvas.addEventListener("mousedown", onMouseDown)
         canvas.addEventListener("mouseup", onMouseUp)
-        canvas.addEventListener("mouseleave", onMouseUp)
         canvas.addEventListener("mousemove", onMouseMove)
         canvas.addEventListener("wheel", onMouseZoom)
         return () => {
             canvas.removeEventListener("mousedown", onMouseDown)
             canvas.removeEventListener("mouseup", onMouseUp)
-            canvas.removeEventListener("mouseleave", onMouseUp)
             canvas.removeEventListener("mousemove", onMouseMove)
             canvas.removeEventListener("wheel", onMouseZoom)
         }
     }, [onMouseZoom, cameraZoom, onMouseDown, onMouseMove])
 
     return (
-        <div>
+        <div className={`${classes.container} overflow-hidden`}>
             <canvas ref={canvasRef} />
             <canvas ref={backCanvasRef} className={classes.backCanvas} width="5632" height="2048" />
         </div>

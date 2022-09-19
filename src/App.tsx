@@ -1,9 +1,18 @@
-import Map from "./Map"
+import Header from "./components/Header"
+import Inspector from "./components/Inspector"
+import Map from "./components/Map"
+import classes from "./App.module.scss"
+import Tools from "./components/Tools"
+import Info from "./components/Info"
 
 const App = () => {
     return (
-        <div className="d-flex align-items-center h-100 overflow-hidden">
+        <div className={`${classes.container} h-100`}>
+            <Info />
+            <Header />
+            <Tools />
             <Map />
+            <Inspector />
         </div>
     )
 }
