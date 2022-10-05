@@ -7,6 +7,7 @@ import Info from "./components/Info"
 import { useEffect, useReducer, useState } from "react"
 import { Colour } from "./types/Colour"
 import reducer, { ActionTypes, initialState } from "./actions/reducer"
+import { ipcRenderer } from "electron"
 
 const App = () => {
     const [state, dispatch] = useReducer(reducer, initialState)
@@ -14,9 +15,8 @@ const App = () => {
     const [selectedProvinceColour, setSelectedProvinceColour] = useState<Colour | undefined>()
 
     useEffect(() => {
-        fetch("/definition.csv")
-            .then(response => response.text())
-            .then(data => {
+        ipcRenderer.invoke("fetch-definition")
+            .then((data: string) => {
                 const provinces = data.split("\n").map(row => {
                     const parts = row.split(";")
                     return {

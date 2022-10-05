@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Colour } from "../types/Colour"
 import classes from "./Map.module.scss"
+import { ipcRenderer } from "electron"
 
 const MAX_ZOOM = 17
 const MIN_ZOOM = 0.1
@@ -47,13 +48,15 @@ const Map = ({ onProvinceSelected }: MapProps) => {
         const ctx = canvas.getContext("2d")
         if (ctx === null) return
 
-        const img = new Image()
-        img.src = '/provinces.bmp'
-        img.onload = () => {
-            setCameraOffset({ x: img.width / -2, y: img.height / -2 })
-            ctx.drawImage(img, 0, 0)
-            setIsMapLoaded(true)
-        }
+        ipcRenderer.invoke("fetch-provinces").then((imgBuffer: Buffer) => {
+            const img = new Image()
+            img.onload = () => {
+                setCameraOffset({ x: img.width / -2, y: img.height / -2 })
+                ctx.drawImage(img, 0, 0)
+                setIsMapLoaded(true)
+            }
+            img.src = URL.createObjectURL(new Blob([imgBuffer]))
+        })
     }, [])
 
     const onMouseDown = useCallback((e: MouseEvent) => {
