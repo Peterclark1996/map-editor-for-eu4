@@ -1,45 +1,30 @@
-import Header from "./components/Header"
-import Inspector from "./components/Inspector"
-import Map from "./components/Map"
+import { useState } from "react"
 import classes from "./App.module.scss"
-import Tools from "./components/Tools"
-import Info from "./components/Info"
-import { useEffect, useReducer, useState } from "react"
-import { Colour } from "./types/Colour"
-import reducer, { ActionTypes, initialState } from "./actions/reducer"
+import LoadedProject from "./components/LoadedProject"
+import { Project } from "./types/Project"
 import { ipcRenderer } from "electron"
+import ErrorBox from "./components/ErrorBox"
 
 const App = () => {
-    const [state, dispatch] = useReducer(reducer, initialState)
+    const [path, setPath] = useState<string>("D:\\Steam\\steamapps\\common\\Europa Universalis IV")
+    const [defaultProject, setDefaultProject] = useState<Project | undefined>(undefined)
+    const [hasErrored, setHasErrored] = useState(false)
 
-    const [selectedProvinceColour, setSelectedProvinceColour] = useState<Colour | undefined>()
+    const loadDefaultProject = () =>
+        ipcRenderer.invoke("fetch-default-project", path)
+            .then(setDefaultProject)
+            .catch(() => setHasErrored(true))
 
-    useEffect(() => {
-        ipcRenderer.invoke("fetch-definition")
-            .then((data: string) => {
-                const provinces = data.split("\n").map(row => {
-                    const parts = row.split(";")
-                    return {
-                        id: parseInt(parts[0]),
-                        colour: {
-                            red: parseInt(parts[1]),
-                            green: parseInt(parts[2]),
-                            blue: parseInt(parts[3])
-                        },
-                        name: parts[4]
-                    }
-                })
-                dispatch({ type: ActionTypes.PROVINCES_LOADED, provinces })
-            })
-    }, [])
+    if (defaultProject != undefined) return <LoadedProject defaultProject={defaultProject} />
 
     return (
-        <div className={`${classes.container} h-100`}>
-            <Info />
-            <Header />
-            <Tools />
-            <Map onProvinceSelected={setSelectedProvinceColour} />
-            <Inspector state={state} selectedProvinceColour={selectedProvinceColour} />
+        <div className="d-flex flex-column h-100 align-items-center m-4">
+            <div className="mb-2">Locate the "Europa Universalis IV" folder</div>
+            <input className={classes.pathInput} value={path} onChange={event => setPath(event.target.value)} />
+            <button className="btn btn-secondary my-2" onClick={loadDefaultProject}>New Project</button>
+            {
+                hasErrored && <ErrorBox message="Failed to load new project. Is the path correct?" />
+            }
         </div>
     )
 }

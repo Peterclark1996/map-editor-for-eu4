@@ -13,12 +13,13 @@ const createWindow = () => {
     })
     mainWindow.setMenuBarVisibility(false)
 
-    if (process.env.NODE_ENV == 'development') {
-        mainWindow.loadURL(`http://127.0.0.1:5173/`)
-        mainWindow.webContents.openDevTools()
-    } else {
+    if (process.env.NODE_ENV == "production") {
         mainWindow.loadFile(path.join(__dirname, "../index.html"))
+        return
     }
+
+    mainWindow.loadURL(`http://127.0.0.1:5173/`)
+    mainWindow.webContents.openDevTools()
 }
 
 app.whenReady().then(() => {
@@ -35,10 +36,23 @@ app.on("window-all-closed", () => {
     }
 })
 
-ipcMain.handle("fetch-provinces", async () => {
-    return fs.readFileSync(path.join(__dirname, "../../electron/resources/provinces.bmp"))
-})
+ipcMain.handle("fetch-default-project", async (_, args: string) => {
+    const provinces = fs.readFileSync(`${args}/map/definition.csv`).toString().split("\n").map(row => {
+        const parts = row.split(";")
+        return {
+            id: parseInt(parts[0]),
+            colour: {
+                red: parseInt(parts[1]),
+                green: parseInt(parts[2]),
+                blue: parseInt(parts[3])
+            },
+            name: parts[4]
+        }
+    })
+    const provinceMap = fs.readFileSync(`${args}/map/provinces.bmp`)
 
-ipcMain.handle("fetch-definition", async () => {
-    return fs.readFileSync(path.join(__dirname, "../../electron/resources/definition.csv")).toString()
+    return {
+        provinces,
+        provinceMap
+    }
 })

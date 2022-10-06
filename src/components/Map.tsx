@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Colour } from "../types/Colour"
+import { Project } from "../types/Project"
 import classes from "./Map.module.scss"
-import { ipcRenderer } from "electron"
 
 const MAX_ZOOM = 17
 const MIN_ZOOM = 0.1
 const SCROLL_SENSITIVITY = 0.001
 
 type MapProps = {
+    state: Project
     onProvinceSelected: (province: Colour) => void
 }
 
-const Map = ({ onProvinceSelected }: MapProps) => {
+const Map = ({ state, onProvinceSelected }: MapProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const backCanvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -48,16 +49,14 @@ const Map = ({ onProvinceSelected }: MapProps) => {
         const ctx = canvas.getContext("2d")
         if (ctx === null) return
 
-        ipcRenderer.invoke("fetch-provinces").then((imgBuffer: Buffer) => {
-            const img = new Image()
-            img.onload = () => {
-                setCameraOffset({ x: img.width / -2, y: img.height / -2 })
-                ctx.drawImage(img, 0, 0)
-                setIsMapLoaded(true)
-            }
-            img.src = URL.createObjectURL(new Blob([imgBuffer]))
-        })
-    }, [])
+        const img = new Image()
+        img.onload = () => {
+            setCameraOffset({ x: img.width / -2, y: img.height / -2 })
+            ctx.drawImage(img, 0, 0)
+            setIsMapLoaded(true)
+        }
+        img.src = URL.createObjectURL(new Blob([state.provinceMap]))
+    }, [state.provinceMap])
 
     const onMouseDown = useCallback((e: MouseEvent) => {
         const canvas = canvasRef.current

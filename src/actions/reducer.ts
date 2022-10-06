@@ -1,21 +1,8 @@
+import { Project } from "../types/Project"
 import { Province } from "../types/Province"
 
-export type State = {
-    provinces: Province[]
-}
-
-export const initialState: State = {
-    provinces: []
-}
-
 export enum ActionTypes {
-    PROVINCES_LOADED,
     PROVINCE_UPDATED,
-}
-
-export type ActionProvincesLoaded = {
-    type: ActionTypes.PROVINCES_LOADED,
-    provinces: Province[]
 }
 
 export type ActionProvinceUpdated = {
@@ -23,13 +10,8 @@ export type ActionProvinceUpdated = {
     province: Province
 }
 
-const reducer = (state: State, action: ActionProvincesLoaded | ActionProvinceUpdated) => {
+const reducer = (state: Project, action: ActionProvinceUpdated) => {
     switch (action.type) {
-        case ActionTypes.PROVINCES_LOADED:
-            return {
-                ...state,
-                provinces: action.provinces
-            }
         case ActionTypes.PROVINCE_UPDATED:
             return {
                 ...state,
