@@ -1,22 +1,30 @@
-import { useState } from "react"
-import SelectionButton, { SelectionButtonIcon } from "../SelectionButton"
+import { Tool } from "../../enums/Tool"
+import SelectionButton from "../SelectionButton"
 import classes from "./Header.module.scss"
 
-const Header = () => {
-    const [selectedTool, setSelectedTool] = useState(SelectionButtonIcon.POINTER)
+type HeaderProps = {
+    selectedTool: Tool
+    setSelectedTool: (tool: Tool) => void
+}
+
+const Header = ({ selectedTool, setSelectedTool }: HeaderProps) => {
+    const tools = [
+        Tool.POINTER,
+        Tool.BRUSH
+    ]
 
     return (
         <div className={`${classes.container} d-flex p-2`}>
-            <SelectionButton
-                icon={SelectionButtonIcon.POINTER}
-                selected={selectedTool === SelectionButtonIcon.POINTER}
-                onClick={() => setSelectedTool(SelectionButtonIcon.POINTER)}
-            />
-            <SelectionButton
-                icon={SelectionButtonIcon.PAINT_BRUSH}
-                selected={selectedTool === SelectionButtonIcon.PAINT_BRUSH}
-                onClick={() => setSelectedTool(SelectionButtonIcon.PAINT_BRUSH)}
-            />
+            {
+                tools.map(tool => (
+                    <SelectionButton
+                        key={tool}
+                        iconName={Tool[tool]}
+                        selected={selectedTool === tool}
+                        onClick={() => setSelectedTool(tool)}
+                    />
+                ))
+            }
         </div>
     )
 }

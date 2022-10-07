@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Colour } from "../types/Colour"
-import { Project } from "../types/Project"
+import { Tool } from "../../enums/Tool"
+import { Colour } from "../../types/Colour"
+import { Project } from "../../types/Project"
 import classes from "./Map.module.scss"
 
 const MAX_ZOOM = 17
@@ -9,14 +10,15 @@ const SCROLL_SENSITIVITY = 0.001
 
 type MapProps = {
     state: Project
+    selectedTool: Tool
     onProvinceSelected: (province: Colour) => void
 }
 
-const Map = ({ state, onProvinceSelected }: MapProps) => {
+const Map = ({ state, selectedTool, onProvinceSelected }: MapProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const backCanvasRef = useRef<HTMLCanvasElement>(null)
 
-    const [isDragging, setIsDragging] = useState(false)
+    const [isMouseDown, setIsMouseDown] = useState(false)
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
     const [cameraZoom, setCameraZoom] = useState(1)
     const [cameraOffset, setCameraOffset] = useState({ x: 0, y: 0 })
@@ -69,26 +71,29 @@ const Map = ({ state, onProvinceSelected }: MapProps) => {
         const point = ctx.getImageData(e.clientX - rect.left, e.clientY - rect.top, 1, 1).data
         onProvinceSelected({ red: point[0], green: point[1], blue: point[2] })
 
-        setIsDragging(true)
+        setIsMouseDown(true)
         setDragStart({
             x: e.clientX / cameraZoom - cameraOffset.x,
             y: e.clientY / cameraZoom - cameraOffset.y
         })
     }, [cameraOffset.x, cameraOffset.y, cameraZoom, onProvinceSelected])
 
-    const onMouseUp = () => setIsDragging(false)
+    const onMouseUp = () => setIsMouseDown(false)
 
     const onMouseMove = useCallback((e: MouseEvent) => {
-        if (!isDragging) return
+        if (!isMouseDown) return
+
+        if (selectedTool !== Tool.POINTER) return
 
         setCameraOffset({
             x: e.clientX / cameraZoom - dragStart.x,
             y: e.clientY / cameraZoom - dragStart.y
         })
-    }, [cameraZoom, dragStart.x, dragStart.y, isDragging])
+
+    }, [cameraZoom, dragStart.x, dragStart.y, isMouseDown, selectedTool])
 
     const onMouseZoom = useCallback((e: WheelEvent) => {
-        if (isDragging) return
+        if (isMouseDown) return
 
         const newZoom = cameraZoom - (e.deltaY * SCROLL_SENSITIVITY * cameraZoom)
         if (newZoom < MIN_ZOOM) {
@@ -100,7 +105,7 @@ const Map = ({ state, onProvinceSelected }: MapProps) => {
             return
         }
         setCameraZoom(newZoom)
-    }, [cameraZoom, isDragging])
+    }, [cameraZoom, isMouseDown])
 
     useEffect(() => {
         const canvas = canvasRef.current

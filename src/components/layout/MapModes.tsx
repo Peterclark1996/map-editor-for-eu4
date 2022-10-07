@@ -1,19 +1,22 @@
-import { useState } from "react"
-import SelectionButton, { SelectionButtonIcon } from "../SelectionButton"
+import { MapMode } from "../../enums/MapMode"
+import SelectionButton from "../SelectionButton"
 import classes from "./MapModes.module.scss"
 
-const MapModes = () => {
-    const [selectedMapMode, setSelectedMapMode] = useState(SelectionButtonIcon.POLITICAL)
+type MapModesProps = {
+    selectedMapMode: MapMode
+    setSelectedMapMode: (mapMode: MapMode) => void
+}
 
+const MapModes = ({ selectedMapMode, setSelectedMapMode }: MapModesProps) => {
     const mapModes = [
-        SelectionButtonIcon.TERRAIN,
-        SelectionButtonIcon.POLITICAL,
-        SelectionButtonIcon.AREAS,
-        SelectionButtonIcon.REGION,
-        SelectionButtonIcon.SUPER_REGION,
-        SelectionButtonIcon.RELIGION,
-        SelectionButtonIcon.CULTURE,
-        SelectionButtonIcon.TRADE
+        MapMode.TERRAIN,
+        MapMode.POLITICAL,
+        MapMode.AREAS,
+        MapMode.REGION,
+        MapMode.SUPER_REGION,
+        MapMode.RELIGION,
+        MapMode.CULTURE,
+        MapMode.TRADE
     ]
 
     return (
@@ -22,7 +25,7 @@ const MapModes = () => {
                 mapModes.map(mapMode => (
                     <SelectionButton
                         key={mapMode}
-                        icon={mapMode}
+                        iconName={MapMode[mapMode]}
                         selected={selectedMapMode === mapMode}
                         onClick={() => setSelectedMapMode(mapMode)}
                     />

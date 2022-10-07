@@ -1,34 +1,21 @@
 import classes from "./SelectionButton.module.scss"
 
-export enum SelectionButtonIcon {
-    POINTER,
-    PAINT_BRUSH,
-    TERRAIN,
-    POLITICAL,
-    AREAS,
-    REGION,
-    SUPER_REGION,
-    RELIGION,
-    CULTURE,
-    TRADE
-}
-
 type SelectionButtonProps = {
-    icon: SelectionButtonIcon
+    iconName: string
     selected: boolean
     onClick: () => void
 }
 
-const SelectionButton = ({ icon, selected, onClick }: SelectionButtonProps) => {
+const SelectionButton = ({ iconName, selected, onClick }: SelectionButtonProps) => {
     return (
         <div className={`d-flex align-items-center justify-content-center ${classes.toolTip}`}>
             <img
                 className={`${classes.fitted} ${selected ? classes.selected : ""}`}
                 role="button"
-                src={`/src/icons/button_${SelectionButtonIcon[icon]}.png`}
+                src={`/src/icons/button_${iconName}.png`}
                 onClick={onClick}
             />
-            <span className={`${classes.toolTipText} ms-2`}>{SelectionButtonIcon[icon].replaceAll("_", " ")}</span>
+            <span className={`${classes.toolTipText} ms-2`}>{iconName.replaceAll("_", " ")}</span>
         </div>
 
     )

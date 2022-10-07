@@ -6,24 +6,28 @@ import MapModes from "./MapModes"
 import Info from "./Info"
 import { useReducer, useState } from "react"
 import { Colour } from "../../types/Colour"
-import reducer from "../../actions/reducer"
+import projectReducer from "../../actions/projectReducer"
 import { Project } from "../../types/Project"
+import { Tool } from "../../enums/Tool"
+import { MapMode } from "../../enums/MapMode"
 
 type LoadedProjectProps = {
     defaultProject: Project
 }
 
 const LoadedProject = ({ defaultProject }: LoadedProjectProps) => {
-    const [state, dispatch] = useReducer(reducer, defaultProject)
+    const [state, dispatch] = useReducer(projectReducer, defaultProject)
 
     const [selectedProvinceColour, setSelectedProvinceColour] = useState<Colour | undefined>()
+    const [selectedTool, setSelectedTool] = useState(Tool.POINTER)
+    const [selectedMapMode, setSelectedMapMode] = useState(MapMode.POLITICAL)
 
     return (
         <div className={`${classes.container} h-100`}>
             <Info />
-            <Header />
-            <MapModes />
-            <Map state={state} onProvinceSelected={setSelectedProvinceColour} />
+            <Header selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
+            <MapModes selectedMapMode={selectedMapMode} setSelectedMapMode={setSelectedMapMode} />
+            <Map state={state} selectedTool={selectedTool} onProvinceSelected={setSelectedProvinceColour} />
             <Inspector state={state} selectedProvinceColour={selectedProvinceColour} />
         </div>
     )
