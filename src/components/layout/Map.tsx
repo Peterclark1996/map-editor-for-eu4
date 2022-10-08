@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import { ActionProvinceMapUpdated, ActionTypes } from "../../actions/projectReducer"
 import { Tool } from "../../enums/Tool"
 import { Colour } from "../../types/Colour"
 import { Project } from "../../types/Project"
@@ -11,10 +12,12 @@ const SCROLL_SENSITIVITY = 0.001
 type MapProps = {
     state: Project
     selectedTool: Tool
+    selectedProvinceColour: Colour | undefined
     onProvinceSelected: (province: Colour) => void
+    dispatch: (action: ActionProvinceMapUpdated) => void
 }
 
-const Map = ({ state, selectedTool, onProvinceSelected }: MapProps) => {
+const Map = ({ state, selectedTool, selectedProvinceColour, onProvinceSelected, dispatch }: MapProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const backCanvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -24,26 +27,31 @@ const Map = ({ state, selectedTool, onProvinceSelected }: MapProps) => {
     const [cameraOffset, setCameraOffset] = useState({ x: 0, y: 0 })
     const [isMapLoaded, setIsMapLoaded] = useState(false)
 
-    useEffect(() => {
-        if (!isMapLoaded) return
-
-        const canvas = canvasRef.current
-        const backCanvas = backCanvasRef.current
-        if (canvas === null || backCanvas === null) return
+    const draw = useCallback((
+        canvas: HTMLCanvasElement,
+        backCanvas: HTMLCanvasElement
+    ) => {
         const ctx = canvas.getContext("2d")
         if (ctx === null) return
 
         canvas.width = window.innerWidth
         canvas.height = window.innerHeight
 
-        ctx.translate(window.innerWidth / 2, window.innerHeight / 2)
         ctx.scale(cameraZoom, cameraZoom)
 
-        ctx.translate(window.innerWidth / 2 + cameraOffset.x, window.innerHeight / 2 + cameraOffset.y)
-
         ctx.imageSmoothingEnabled = false
-        ctx.drawImage(backCanvas, 0, 0)
-    }, [cameraOffset.x, cameraOffset.y, cameraZoom, isMapLoaded])
+        ctx.drawImage(backCanvas, cameraOffset.x, cameraOffset.y)
+    }, [cameraOffset.x, cameraOffset.y, cameraZoom])
+
+    useEffect(() => {
+        if (!isMapLoaded) return
+
+        const canvas = canvasRef.current
+        const backCanvas = backCanvasRef.current
+        if (canvas === null || backCanvas === null) return
+
+        draw(canvas, backCanvas)
+    }, [cameraOffset.x, cameraOffset.y, cameraZoom, draw, isMapLoaded])
 
     useEffect(() => {
         const canvas = backCanvasRef.current
@@ -53,12 +61,35 @@ const Map = ({ state, selectedTool, onProvinceSelected }: MapProps) => {
 
         const img = new Image()
         img.onload = () => {
-            setCameraOffset({ x: img.width / -2, y: img.height / -2 })
             ctx.drawImage(img, 0, 0)
             setIsMapLoaded(true)
         }
         img.src = URL.createObjectURL(new Blob([state.provinceMap]))
     }, [state.provinceMap])
+
+    const paint = useCallback((e: MouseEvent) => {
+        if (selectedProvinceColour === undefined) return
+
+        const canvas = canvasRef.current
+        const backCanvas = backCanvasRef.current
+        if (canvas === null || backCanvas === null) return
+        const ctx = backCanvas.getContext("2d")
+        if (ctx === null) return
+
+        const rect = canvas.getBoundingClientRect()
+        const mouseX = e.clientX - rect.left
+        const mouseY = e.clientY - 40 // rect.top should return 40, but it doesn't?
+        const x = Math.floor((mouseX - cameraOffset.x * cameraZoom) / cameraZoom)
+        const y = Math.floor((mouseY - cameraOffset.y * cameraZoom) / cameraZoom)
+
+        ctx.fillStyle = `rgb(${selectedProvinceColour.red}, ${selectedProvinceColour.green}, ${selectedProvinceColour.blue})`
+        ctx.fillRect(x, y, 1, 1)
+
+        const buffer = Buffer.from(new Uint8Array(ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer))
+        dispatch({ type: ActionTypes.PROVINCE_MAP_UPDATED, provinceMap: buffer })
+
+        draw(canvas, backCanvas)
+    }, [cameraOffset.x, cameraOffset.y, cameraZoom, dispatch, draw, selectedProvinceColour])
 
     const onMouseDown = useCallback((e: MouseEvent) => {
         const canvas = canvasRef.current
@@ -67,30 +98,37 @@ const Map = ({ state, selectedTool, onProvinceSelected }: MapProps) => {
         if (ctx === null) return
         const target = e.currentTarget as HTMLElement
         if (target === null) return
-        const rect = target.getBoundingClientRect()
-        const point = ctx.getImageData(e.clientX - rect.left, e.clientY - rect.top, 1, 1).data
-        onProvinceSelected({ red: point[0], green: point[1], blue: point[2] })
-
         setIsMouseDown(true)
         setDragStart({
             x: e.clientX / cameraZoom - cameraOffset.x,
             y: e.clientY / cameraZoom - cameraOffset.y
         })
-    }, [cameraOffset.x, cameraOffset.y, cameraZoom, onProvinceSelected])
+
+        if (selectedTool === Tool.POINTER) {
+            const rect = target.getBoundingClientRect()
+            const point = ctx.getImageData(e.clientX - rect.left, e.clientY - rect.top, 1, 1).data
+            onProvinceSelected({ red: point[0], green: point[1], blue: point[2] })
+        } else {
+            paint(e)
+        }
+    }, [cameraOffset.x, cameraOffset.y, cameraZoom, onProvinceSelected, paint, selectedTool])
 
     const onMouseUp = () => setIsMouseDown(false)
 
     const onMouseMove = useCallback((e: MouseEvent) => {
+
+
         if (!isMouseDown) return
 
-        if (selectedTool !== Tool.POINTER) return
-
-        setCameraOffset({
-            x: e.clientX / cameraZoom - dragStart.x,
-            y: e.clientY / cameraZoom - dragStart.y
-        })
-
-    }, [cameraZoom, dragStart.x, dragStart.y, isMouseDown, selectedTool])
+        if (selectedTool === Tool.POINTER) {
+            setCameraOffset({
+                x: e.clientX / cameraZoom - dragStart.x,
+                y: e.clientY / cameraZoom - dragStart.y
+            })
+        } else {
+            paint(e)
+        }
+    }, [cameraZoom, dragStart.x, dragStart.y, isMouseDown, paint, selectedTool])
 
     const onMouseZoom = useCallback((e: WheelEvent) => {
         if (isMouseDown) return

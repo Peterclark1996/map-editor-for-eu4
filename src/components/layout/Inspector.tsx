@@ -1,9 +1,9 @@
-import { State } from "../actions/reducer"
-import { Colour } from "../types/Colour"
+import { Colour } from "../../types/Colour"
+import { Project } from "../../types/Project"
 import classes from "./Inspector.module.scss"
 
 type InspectorProps = {
-    state: State
+    state: Project
     selectedProvinceColour: Colour | undefined
 }
 
@@ -37,7 +37,7 @@ const Inspector = ({ state, selectedProvinceColour }: InspectorProps) => {
     }
 
     return (
-        <div className={`${classes.container} d-flex flex-column justify-content-center align-items-center p-2`}>
+        <div className={`${classes.container} d-flex flex-column justify-content-center align-items-center p-2 bg-secondary`}>
             {getContent()}
         </div>
     )

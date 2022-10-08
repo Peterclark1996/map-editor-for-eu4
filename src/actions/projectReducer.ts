@@ -3,6 +3,7 @@ import { Province } from "../types/Province"
 
 export enum ActionTypes {
     PROVINCE_UPDATED,
+    PROVINCE_MAP_UPDATED,
 }
 
 export type ActionProvinceUpdated = {
@@ -10,7 +11,12 @@ export type ActionProvinceUpdated = {
     province: Province
 }
 
-const reducer = (state: Project, action: ActionProvinceUpdated) => {
+export type ActionProvinceMapUpdated = {
+    type: ActionTypes.PROVINCE_MAP_UPDATED,
+    provinceMap: Buffer
+}
+
+const reducer = (state: Project, action: ActionProvinceUpdated | ActionProvinceMapUpdated) => {
     switch (action.type) {
         case ActionTypes.PROVINCE_UPDATED:
             return {
@@ -21,6 +27,11 @@ const reducer = (state: Project, action: ActionProvinceUpdated) => {
                     }
                     return province
                 })
+            }
+        case ActionTypes.PROVINCE_MAP_UPDATED:
+            return {
+                ...state,
+                provinceMap: action.provinceMap
             }
     }
 }

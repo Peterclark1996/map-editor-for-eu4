@@ -27,7 +27,7 @@ const LoadedProject = ({ defaultProject }: LoadedProjectProps) => {
             <Info />
             <Header selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
             <MapModes selectedMapMode={selectedMapMode} setSelectedMapMode={setSelectedMapMode} />
-            <Map state={state} selectedTool={selectedTool} onProvinceSelected={setSelectedProvinceColour} />
+            <Map state={state} selectedTool={selectedTool} selectedProvinceColour={selectedProvinceColour} onProvinceSelected={setSelectedProvinceColour} dispatch={dispatch} />
             <Inspector state={state} selectedProvinceColour={selectedProvinceColour} />
         </div>
     )

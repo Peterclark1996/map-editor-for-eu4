@@ -14,7 +14,7 @@ const Header = ({ selectedTool, setSelectedTool }: HeaderProps) => {
     ]
 
     return (
-        <div className={`${classes.container} d-flex p-2`}>
+        <div className={`${classes.container} d-flex p-2 bg-secondary`}>
             {
                 tools.map(tool => (
                     <SelectionButton

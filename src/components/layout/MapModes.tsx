@@ -20,7 +20,7 @@ const MapModes = ({ selectedMapMode, setSelectedMapMode }: MapModesProps) => {
     ]
 
     return (
-        <div className={`${classes.container} d-flex flex-column p-2`}>
+        <div className={`${classes.container} d-flex flex-column p-2 bg-secondary`}>
             {
                 mapModes.map(mapMode => (
                     <SelectionButton
