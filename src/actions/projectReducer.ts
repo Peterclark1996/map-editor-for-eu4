@@ -1,24 +1,24 @@
 import { Project } from "../types/Project"
 import { Province } from "../types/Province"
 
-export enum ActionTypes {
+export enum ProjectActionTypes {
     PROVINCE_UPDATED,
     PROVINCE_MAP_UPDATED,
 }
 
 export type ActionProvinceUpdated = {
-    type: ActionTypes.PROVINCE_UPDATED,
+    type: ProjectActionTypes.PROVINCE_UPDATED,
     province: Province
 }
 
 export type ActionProvinceMapUpdated = {
-    type: ActionTypes.PROVINCE_MAP_UPDATED,
+    type: ProjectActionTypes.PROVINCE_MAP_UPDATED,
     provinceMap: Buffer
 }
 
-const reducer = (state: Project, action: ActionProvinceUpdated | ActionProvinceMapUpdated) => {
+const projectReducer = (state: Project, action: ActionProvinceUpdated | ActionProvinceMapUpdated) => {
     switch (action.type) {
-        case ActionTypes.PROVINCE_UPDATED:
+        case ProjectActionTypes.PROVINCE_UPDATED:
             return {
                 ...state,
                 provinces: state.provinces.map(province => {
@@ -28,7 +28,7 @@ const reducer = (state: Project, action: ActionProvinceUpdated | ActionProvinceM
                     return province
                 })
             }
-        case ActionTypes.PROVINCE_MAP_UPDATED:
+        case ProjectActionTypes.PROVINCE_MAP_UPDATED:
             return {
                 ...state,
                 provinceMap: action.provinceMap
@@ -36,4 +36,4 @@ const reducer = (state: Project, action: ActionProvinceUpdated | ActionProvinceM
     }
 }
 
-export default reducer
+export default projectReducer

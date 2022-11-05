@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { ActionProvinceMapUpdated, ActionTypes } from "../../actions/projectReducer"
+import { InterfaceAction, InterfaceActionTypes } from "../../actions/interfaceReducer"
+import { ActionProvinceMapUpdated, ProjectActionTypes } from "../../actions/projectReducer"
 import { Tool } from "../../enums/Tool"
-import { Colour } from "../../types/Colour"
+import { InterfaceState } from "../../types/InterfaceState"
 import { Project } from "../../types/Project"
 import classes from "./Map.module.scss"
 
@@ -10,15 +11,13 @@ const MIN_ZOOM = 0.1
 const SCROLL_SENSITIVITY = 0.001
 
 type MapProps = {
-    state: Project
-    selectedTool: Tool
-    selectedToolSize: number
-    selectedProvinceColour: Colour | undefined
-    onProvinceSelected: (province: Colour) => void
-    dispatch: (action: ActionProvinceMapUpdated) => void
+    projectState: Project
+    projectDispatch: (action: ActionProvinceMapUpdated) => void
+    interfaceState: InterfaceState
+    interfaceDispatch: (action: InterfaceAction) => void
 }
 
-const Map = ({ state, selectedTool, selectedToolSize, selectedProvinceColour, onProvinceSelected, dispatch }: MapProps) => {
+const Map = ({ projectState, projectDispatch, interfaceState, interfaceDispatch }: MapProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const backCanvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -65,11 +64,11 @@ const Map = ({ state, selectedTool, selectedToolSize, selectedProvinceColour, on
             ctx.drawImage(img, 0, 0)
             setIsMapLoaded(true)
         }
-        img.src = URL.createObjectURL(new Blob([state.provinceMap]))
-    }, [state.provinceMap])
+        img.src = URL.createObjectURL(new Blob([projectState.provinceMap]))
+    }, [projectState.provinceMap])
 
     const paint = useCallback((e: MouseEvent) => {
-        if (selectedProvinceColour === undefined) return
+        if (interfaceState.provinceColour === undefined) return
 
         const canvas = canvasRef.current
         const backCanvas = backCanvasRef.current
@@ -83,14 +82,14 @@ const Map = ({ state, selectedTool, selectedToolSize, selectedProvinceColour, on
         const x = Math.floor((mouseX - cameraOffset.x * cameraZoom) / cameraZoom)
         const y = Math.floor((mouseY - cameraOffset.y * cameraZoom) / cameraZoom)
 
-        ctx.fillStyle = `rgb(${selectedProvinceColour.red}, ${selectedProvinceColour.green}, ${selectedProvinceColour.blue})`
-        ctx.fillRect(x - Math.floor(selectedToolSize / 2), y - Math.floor(selectedToolSize / 2), selectedToolSize, selectedToolSize)
+        ctx.fillStyle = `rgb(${interfaceState.provinceColour.red}, ${interfaceState.provinceColour.green}, ${interfaceState.provinceColour.blue})`
+        ctx.fillRect(x - Math.floor(interfaceState.toolSize / 2), y - Math.floor(interfaceState.toolSize / 2), interfaceState.toolSize, interfaceState.toolSize)
 
         const buffer = Buffer.from(new Uint8Array(ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer))
-        dispatch({ type: ActionTypes.PROVINCE_MAP_UPDATED, provinceMap: buffer })
+        projectDispatch({ type: ProjectActionTypes.PROVINCE_MAP_UPDATED, provinceMap: buffer })
 
         draw(canvas, backCanvas)
-    }, [cameraOffset.x, cameraOffset.y, cameraZoom, dispatch, draw, selectedProvinceColour, selectedToolSize])
+    }, [cameraOffset.x, cameraOffset.y, cameraZoom, projectDispatch, draw, interfaceState.provinceColour, interfaceState.toolSize])
 
     const onMouseDown = useCallback((e: MouseEvent) => {
         const canvas = canvasRef.current
@@ -105,21 +104,21 @@ const Map = ({ state, selectedTool, selectedToolSize, selectedProvinceColour, on
             y: e.clientY / cameraZoom - cameraOffset.y
         })
 
-        if (selectedTool === Tool.POINTER) {
+        if (interfaceState.tool === Tool.POINTER) {
             const rect = target.getBoundingClientRect()
             const point = ctx.getImageData(e.clientX - rect.left, e.clientY - rect.top, 1, 1).data
-            onProvinceSelected({ red: point[0], green: point[1], blue: point[2] })
+            interfaceDispatch({ type: InterfaceActionTypes.PROVINCE_COLOUR_UPDATED, colour: { red: point[0], green: point[1], blue: point[2] } })
         } else {
             paint(e)
         }
-    }, [cameraOffset.x, cameraOffset.y, cameraZoom, onProvinceSelected, paint, selectedTool])
+    }, [cameraOffset.x, cameraOffset.y, cameraZoom, interfaceDispatch, paint, interfaceState.tool])
 
     const onMouseUp = () => setIsMouseDown(false)
 
     const onMouseMove = useCallback((e: MouseEvent) => {
         if (!isMouseDown) return
 
-        if (selectedTool === Tool.POINTER) {
+        if (interfaceState.tool === Tool.POINTER) {
             setCameraOffset({
                 x: e.clientX / cameraZoom - dragStart.x,
                 y: e.clientY / cameraZoom - dragStart.y
@@ -127,7 +126,7 @@ const Map = ({ state, selectedTool, selectedToolSize, selectedProvinceColour, on
         } else {
             paint(e)
         }
-    }, [cameraZoom, dragStart.x, dragStart.y, isMouseDown, paint, selectedTool])
+    }, [cameraZoom, dragStart.x, dragStart.y, isMouseDown, paint, interfaceState.tool])
 
     const onMouseZoom = useCallback((e: WheelEvent) => {
         if (isMouseDown) return

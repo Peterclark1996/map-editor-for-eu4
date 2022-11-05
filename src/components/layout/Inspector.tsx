@@ -1,18 +1,18 @@
 import { Colour } from "../../types/Colour"
-import { Project } from "../../types/Project"
+import { Province } from "../../types/Province"
 import classes from "./Inspector.module.scss"
 
 type InspectorProps = {
-    state: Project
+    provinces: Province[]
     selectedProvinceColour: Colour | undefined
 }
 
-const Inspector = ({ state, selectedProvinceColour }: InspectorProps) => {
+const Inspector = ({ provinces, selectedProvinceColour }: InspectorProps) => {
 
     const getContent = () => {
         if (selectedProvinceColour === undefined) return "No province selected"
 
-        const selectedProvince = state.provinces.find(p =>
+        const selectedProvince = provinces.find(p =>
             p.colour.red === selectedProvinceColour.red &&
             p.colour.green === selectedProvinceColour.green &&
             p.colour.blue === selectedProvinceColour.blue

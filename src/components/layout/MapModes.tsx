@@ -4,10 +4,10 @@ import classes from "./MapModes.module.scss"
 
 type MapModesProps = {
     selectedMapMode: MapMode
-    setSelectedMapMode: (mapMode: MapMode) => void
+    onMapModeSelected: (mapMode: MapMode) => void
 }
 
-const MapModes = ({ selectedMapMode, setSelectedMapMode }: MapModesProps) => {
+const MapModes = ({ selectedMapMode, onMapModeSelected }: MapModesProps) => {
     const mapModes = [
         MapMode.TERRAIN,
         MapMode.POLITICAL,
@@ -27,7 +27,7 @@ const MapModes = ({ selectedMapMode, setSelectedMapMode }: MapModesProps) => {
                         key={mapMode}
                         iconName={MapMode[mapMode]}
                         selected={selectedMapMode === mapMode}
-                        onClick={() => setSelectedMapMode(mapMode)}
+                        onClick={() => onMapModeSelected(mapMode)}
                     />
                 ))
             }

@@ -4,11 +4,11 @@ import Map from "./Map"
 import classes from "./LoadedProject.module.scss"
 import MapModes from "./MapModes"
 import Info from "./Info"
-import { useReducer, useState } from "react"
-import { Colour } from "../../types/Colour"
+import { useReducer } from "react"
 import projectReducer from "../../actions/projectReducer"
 import { Project } from "../../types/Project"
-import { Tool } from "../../enums/Tool"
+import interfaceReducer, { InterfaceActionTypes } from "../../actions/interfaceReducer"
+import { defaultInterfaceState } from "../../types/InterfaceState"
 import { MapMode } from "../../enums/MapMode"
 
 type LoadedProjectProps = {
@@ -16,20 +16,23 @@ type LoadedProjectProps = {
 }
 
 const LoadedProject = ({ defaultProject }: LoadedProjectProps) => {
-    const [projectState, projectDisptach] = useReducer(projectReducer, defaultProject)
+    const [projectState, projectDispatch] = useReducer(projectReducer, defaultProject)
+    const [interfaceState, interfaceDispatch] = useReducer(interfaceReducer, defaultInterfaceState)
 
-    const [selectedProvinceColour, setSelectedProvinceColour] = useState<Colour | undefined>()
-    const [selectedTool, setSelectedTool] = useState(Tool.POINTER)
-    const [selectedMapMode, setSelectedMapMode] = useState(MapMode.POLITICAL)
-    const [selectedToolSize, setSelectedToolSize] = useState(1)
+    const onMapModeSelected = (mapMode: MapMode) => interfaceDispatch({ type: InterfaceActionTypes.MAP_MODE_UPDATED, mapMode })
 
     return (
         <div className={`${classes.container} h-100`}>
             <Info />
-            <Header selectedTool={selectedTool} setSelectedTool={setSelectedTool} setSelectedToolSize={setSelectedToolSize} />
-            <MapModes selectedMapMode={selectedMapMode} setSelectedMapMode={setSelectedMapMode} />
-            <Map state={projectState} selectedTool={selectedTool} selectedToolSize={selectedToolSize} selectedProvinceColour={selectedProvinceColour} onProvinceSelected={setSelectedProvinceColour} dispatch={projectDisptach} />
-            <Inspector state={projectState} selectedProvinceColour={selectedProvinceColour} />
+            <Header interfaceState={interfaceState} interfaceDispatch={interfaceDispatch} />
+            <MapModes selectedMapMode={interfaceState.mapMode} onMapModeSelected={onMapModeSelected} />
+            <Map
+                projectState={projectState}
+                projectDispatch={projectDispatch}
+                interfaceState={interfaceState}
+                interfaceDispatch={interfaceDispatch}
+            />
+            <Inspector provinces={projectState.provinces} selectedProvinceColour={interfaceState.provinceColour} />
         </div>
     )
 }
