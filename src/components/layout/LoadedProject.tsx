@@ -16,19 +16,20 @@ type LoadedProjectProps = {
 }
 
 const LoadedProject = ({ defaultProject }: LoadedProjectProps) => {
-    const [state, dispatch] = useReducer(projectReducer, defaultProject)
+    const [projectState, projectDisptach] = useReducer(projectReducer, defaultProject)
 
     const [selectedProvinceColour, setSelectedProvinceColour] = useState<Colour | undefined>()
     const [selectedTool, setSelectedTool] = useState(Tool.POINTER)
     const [selectedMapMode, setSelectedMapMode] = useState(MapMode.POLITICAL)
+    const [selectedToolSize, setSelectedToolSize] = useState(1)
 
     return (
         <div className={`${classes.container} h-100`}>
             <Info />
-            <Header selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
+            <Header selectedTool={selectedTool} setSelectedTool={setSelectedTool} setSelectedToolSize={setSelectedToolSize} />
             <MapModes selectedMapMode={selectedMapMode} setSelectedMapMode={setSelectedMapMode} />
-            <Map state={state} selectedTool={selectedTool} selectedProvinceColour={selectedProvinceColour} onProvinceSelected={setSelectedProvinceColour} dispatch={dispatch} />
-            <Inspector state={state} selectedProvinceColour={selectedProvinceColour} />
+            <Map state={projectState} selectedTool={selectedTool} selectedToolSize={selectedToolSize} selectedProvinceColour={selectedProvinceColour} onProvinceSelected={setSelectedProvinceColour} dispatch={projectDisptach} />
+            <Inspector state={projectState} selectedProvinceColour={selectedProvinceColour} />
         </div>
     )
 }

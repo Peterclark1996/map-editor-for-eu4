@@ -12,12 +12,13 @@ const SCROLL_SENSITIVITY = 0.001
 type MapProps = {
     state: Project
     selectedTool: Tool
+    selectedToolSize: number
     selectedProvinceColour: Colour | undefined
     onProvinceSelected: (province: Colour) => void
     dispatch: (action: ActionProvinceMapUpdated) => void
 }
 
-const Map = ({ state, selectedTool, selectedProvinceColour, onProvinceSelected, dispatch }: MapProps) => {
+const Map = ({ state, selectedTool, selectedToolSize, selectedProvinceColour, onProvinceSelected, dispatch }: MapProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const backCanvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -83,13 +84,13 @@ const Map = ({ state, selectedTool, selectedProvinceColour, onProvinceSelected, 
         const y = Math.floor((mouseY - cameraOffset.y * cameraZoom) / cameraZoom)
 
         ctx.fillStyle = `rgb(${selectedProvinceColour.red}, ${selectedProvinceColour.green}, ${selectedProvinceColour.blue})`
-        ctx.fillRect(x, y, 1, 1)
+        ctx.fillRect(x - Math.floor(selectedToolSize / 2), y - Math.floor(selectedToolSize / 2), selectedToolSize, selectedToolSize)
 
         const buffer = Buffer.from(new Uint8Array(ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer))
         dispatch({ type: ActionTypes.PROVINCE_MAP_UPDATED, provinceMap: buffer })
 
         draw(canvas, backCanvas)
-    }, [cameraOffset.x, cameraOffset.y, cameraZoom, dispatch, draw, selectedProvinceColour])
+    }, [cameraOffset.x, cameraOffset.y, cameraZoom, dispatch, draw, selectedProvinceColour, selectedToolSize])
 
     const onMouseDown = useCallback((e: MouseEvent) => {
         const canvas = canvasRef.current
@@ -116,8 +117,6 @@ const Map = ({ state, selectedTool, selectedProvinceColour, onProvinceSelected, 
     const onMouseUp = () => setIsMouseDown(false)
 
     const onMouseMove = useCallback((e: MouseEvent) => {
-
-
         if (!isMouseDown) return
 
         if (selectedTool === Tool.POINTER) {
