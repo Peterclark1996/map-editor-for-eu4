@@ -37,7 +37,7 @@ const Inspector = ({ provinces, selectedProvinceColour }: InspectorProps) => {
     }
 
     return (
-        <div className={`${classes.container} d-flex flex-column justify-content-center align-items-center p-2 bg-secondary`}>
+        <div className={`${classes.container} d-flex flex-column justify-content-center align-items-center p-2 background`}>
             {getContent()}
         </div>
     )

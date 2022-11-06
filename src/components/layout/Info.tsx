@@ -2,7 +2,7 @@ import classes from "./Info.module.scss"
 
 const Info = () => {
     return (
-        <div className={`${classes.container} p-2 bg-secondary`}>
+        <div className={`${classes.container} p-2 background`}>
             v0.1
         </div>
     )
