@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { InterfaceAction, InterfaceActionTypes } from "../../actions/interfaceReducer"
 import { ActionProvinceMapUpdated, ProjectActionTypes } from "../../actions/projectReducer"
-import { Tool } from "../../enums/Tool"
+import { Tool } from "../../../enums/Tool"
 import { InterfaceState } from "../../types/InterfaceState"
 import { Project } from "../../types/Project"
 import classes from "./Map.module.scss"

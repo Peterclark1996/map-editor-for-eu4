@@ -1,5 +1,5 @@
-import { MapMode } from "../../enums/MapMode"
-import SelectionButton from "../SelectionButton"
+import { MapMode } from "../../../enums/MapMode"
+import MapModeButton from "../MapModeButton"
 import classes from "./MapModes.module.scss"
 
 type MapModesProps = {
@@ -23,7 +23,7 @@ const MapModes = ({ selectedMapMode, onMapModeSelected }: MapModesProps) => {
         <div className={`${classes.container} d-flex flex-column p-2 background`}>
             {
                 mapModes.map(mapMode => (
-                    <SelectionButton
+                    <MapModeButton
                         key={mapMode}
                         iconName={MapMode[mapMode]}
                         selected={selectedMapMode === mapMode}

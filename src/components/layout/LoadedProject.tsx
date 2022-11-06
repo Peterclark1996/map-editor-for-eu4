@@ -6,16 +6,17 @@ import MapModes from "./MapModes"
 import Info from "./Info"
 import { useReducer } from "react"
 import projectReducer from "../../actions/projectReducer"
-import { Project } from "../../types/Project"
+import { Project } from "../../../types/Project"
 import interfaceReducer, { InterfaceActionTypes } from "../../actions/interfaceReducer"
-import { defaultInterfaceState } from "../../types/InterfaceState"
-import { MapMode } from "../../enums/MapMode"
+import { defaultInterfaceState } from "../../../types/InterfaceState"
+import { MapMode } from "../../../enums/MapMode"
 
 type LoadedProjectProps = {
     defaultProject: Project
+    path: string
 }
 
-const LoadedProject = ({ defaultProject }: LoadedProjectProps) => {
+const LoadedProject = ({ defaultProject, path }: LoadedProjectProps) => {
     const [projectState, projectDispatch] = useReducer(projectReducer, defaultProject)
     const [interfaceState, interfaceDispatch] = useReducer(interfaceReducer, defaultInterfaceState)
 
@@ -24,7 +25,7 @@ const LoadedProject = ({ defaultProject }: LoadedProjectProps) => {
     return (
         <div className={`${classes.container} h-100`}>
             <Info />
-            <Header interfaceState={interfaceState} interfaceDispatch={interfaceDispatch} />
+            <Header project={projectState} path={path} interfaceState={interfaceState} interfaceDispatch={interfaceDispatch} />
             <MapModes selectedMapMode={interfaceState.mapMode} onMapModeSelected={onMapModeSelected} />
             <Map
                 projectState={projectState}

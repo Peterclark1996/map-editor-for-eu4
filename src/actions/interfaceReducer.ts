@@ -1,6 +1,6 @@
-import { MapMode } from "../enums/MapMode"
-import { Tool } from "../enums/Tool"
-import { Colour } from "../types/Colour"
+import { MapMode } from "../../enums/MapMode"
+import { Tool } from "../../enums/Tool"
+import { Colour } from "../../types/Colour"
 import { InterfaceState } from "../types/InterfaceState"
 
 export enum InterfaceActionTypes {

@@ -1,4 +1,4 @@
-import classes from "./SelectionButton.module.scss"
+import classes from "./MapModeButton.module.scss"
 
 type SelectionButtonProps = {
     iconName: string
@@ -6,7 +6,7 @@ type SelectionButtonProps = {
     onClick: () => void
 }
 
-const SelectionButton = ({ iconName, selected, onClick }: SelectionButtonProps) => {
+const MapModeButton = ({ iconName, selected, onClick }: SelectionButtonProps) => {
     return (
         <div className={`d-flex align-items-center justify-content-center ${classes.toolTip}`}>
             <img
@@ -21,4 +21,4 @@ const SelectionButton = ({ iconName, selected, onClick }: SelectionButtonProps) 
     )
 }
 
-export default SelectionButton
+export default MapModeButton
