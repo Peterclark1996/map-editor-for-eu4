@@ -88,5 +88,4 @@ ipcMain.handle("save-mod", async (_, args: SaveModArgs) => {
         args.project.provinces.map(p => `${p.id};${p.colour.red};${p.colour.green};${p.colour.blue};${p.name};x`).join("\n")
 
     fs.writeFileSync(`${modPath}/map/definition.csv`, definitionFile)
-    fs.writeFileSync(`${modPath}/map/provinces.bmp`, args.project.provinceMap)
 })

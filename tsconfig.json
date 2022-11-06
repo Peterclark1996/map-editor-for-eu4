@@ -23,7 +23,7 @@
   "include": [
     "src",
     "types/Colour.ts",
-    "enums"
+    "src/enums"
   ],
   "references": [
     {

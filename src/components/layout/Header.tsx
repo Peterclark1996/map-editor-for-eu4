@@ -1,12 +1,12 @@
 import { useState } from "react"
 import { InterfaceAction, InterfaceActionTypes } from "../../actions/interfaceReducer"
-import { Tool } from "../../../enums/Tool"
-import { InterfaceState } from "../../../types/InterfaceState"
+import { Tool } from "../../enums/Tool"
+import { InterfaceState } from "../../types/InterfaceState"
 import Overlay from "../Overlay"
 import SaveForm from "../SaveForm"
 import ToolButton from "../ToolButton"
 import classes from "./Header.module.scss"
-import { Project } from "../../../types/Project"
+import { Project } from "../../types/Project"
 
 type HeaderProps = {
     path: string

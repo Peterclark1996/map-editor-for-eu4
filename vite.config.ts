@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     electron({
       main: {
-        entry: 'electron/main.ts',
+        entry: 'src/electron/main.ts',
         vite: {
           build: {
             sourcemap: false,
@@ -19,7 +19,7 @@ export default defineConfig({
       },
       preload: {
         input: {
-          index: join(__dirname, 'electron/preload.ts'),
+          index: join(__dirname, 'src/electron/preload.ts'),
         },
         vite: {
           build: {

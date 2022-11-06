@@ -1,4 +1,4 @@
-import { Colour } from "../../../types/Colour"
+import { Colour } from "../../types/Colour"
 import { Province } from "../../types/Province"
 import classes from "./Inspector.module.scss"
 

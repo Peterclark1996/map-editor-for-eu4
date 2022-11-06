@@ -1,4 +1,4 @@
-import { MapMode } from "../../../enums/MapMode"
+import { MapMode } from "../../enums/MapMode"
 import MapModeButton from "../MapModeButton"
 import classes from "./MapModes.module.scss"
 

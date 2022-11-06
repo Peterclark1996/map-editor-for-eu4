@@ -1,7 +1,7 @@
 import { useState } from "react"
 import classes from "./App.module.scss"
 import LoadedProject from "./components/layout/LoadedProject"
-import { Project } from "../types/Project"
+import { Project } from "./types/Project"
 import { ipcRenderer } from "electron"
 import ErrorBox from "./components/ErrorBox"
 import Button from "./components/Button"

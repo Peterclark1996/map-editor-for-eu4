@@ -6,10 +6,10 @@ import MapModes from "./MapModes"
 import Info from "./Info"
 import { useReducer } from "react"
 import projectReducer from "../../actions/projectReducer"
-import { Project } from "../../../types/Project"
+import { Project } from "../../types/Project"
 import interfaceReducer, { InterfaceActionTypes } from "../../actions/interfaceReducer"
-import { defaultInterfaceState } from "../../../types/InterfaceState"
-import { MapMode } from "../../../enums/MapMode"
+import { defaultInterfaceState } from "../../types/InterfaceState"
+import { MapMode } from "../../enums/MapMode"
 
 type LoadedProjectProps = {
     defaultProject: Project

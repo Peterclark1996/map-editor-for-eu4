@@ -7,7 +7,7 @@
   asar: true,
   directories: {
     output: "release/${version}",
-    buildResources: "electron/resources",
+    buildResources: "src/electron/resources",
   },
   files: ["dist"],
   win: {

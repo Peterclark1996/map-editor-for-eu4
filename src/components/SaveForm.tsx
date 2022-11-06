@@ -2,7 +2,7 @@ import { useState } from "react"
 import Button from "./Button"
 import classes from "./SaveForm.module.scss"
 import { ipcRenderer } from "electron"
-import { Project } from "../../types/Project"
+import { Project } from "../types/Project"
 
 type SaveFormProps = {
     project: Project
