@@ -12,24 +12,33 @@ type SaveFormProps = {
 
 const SaveForm = ({ project, path, onClose }: SaveFormProps) => {
     const [name, setName] = useState("")
+    const [isSaving, setIsSaving] = useState(false)
     const [hasSaved, setHasSaved] = useState(false)
     const [hasErrored, setHasErrored] = useState(false)
 
     const onSaveClick = () => {
         if (name.length === 0) return
 
+        setIsSaving(true)
+
         ipcRenderer.invoke("save-mod", {
             path,
             modName: name,
             project
         })
-            .then(() => setHasSaved(true))
-            .catch(() => setHasErrored(true))
+            .then(() => {
+                setHasSaved(true)
+                setIsSaving(false)
+            })
+            .catch(() => {
+                setHasErrored(true)
+                setIsSaving(false)
+            })
     }
 
     return (
         <div className="d-flex flex-column align-items-center p-2">
-            <div className={hasSaved || hasErrored ? classes.hidden : ""}>
+            <div className={hasSaved || hasErrored || isSaving ? classes.hidden : ""}>
                 <div className="d-flex align-items-center">
                     <span className="user-select-none me-2">Mod name:</span>
                     <input className={classes.input} value={name} onChange={e => setName(e.target.value)} />
@@ -39,7 +48,7 @@ const SaveForm = ({ project, path, onClose }: SaveFormProps) => {
                     <input
                         disabled={true}
                         className={classes.input}
-                        value={name.toLowerCase().replace(/[^a-z_ ]/g, "").replace(/[ ]/g, "_")}
+                        value={name.toLowerCase().replace(/[^a-z0-9_ ]/g, "").replace(/[ ]/g, "_")}
                         onChange={() => undefined}
                     />
                 </div>
@@ -47,6 +56,9 @@ const SaveForm = ({ project, path, onClose }: SaveFormProps) => {
                     <Button text="Cancel" onClick={onClose} />
                     <Button text="Save" onClick={onSaveClick} />
                 </div>
+            </div>
+            <div className={`${isSaving ? "" : classes.hidden} d-flex flex-column position-absolute align-items-center`}>
+                <span className="user-select-none">Saving...</span>
             </div>
             <div className={`${hasSaved ? "" : classes.hidden} d-flex flex-column position-absolute align-items-center`}>
                 <span className="user-select-none">Saved!</span>

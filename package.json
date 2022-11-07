@@ -15,6 +15,7 @@
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.6",
     "@vitejs/plugin-react": "^2.0.0",
+    "binary-bmp": "^1.0.1",
     "bootstrap": "^5.2.1",
     "electron": "^19.0.8",
     "electron-builder": "^23.1.0",

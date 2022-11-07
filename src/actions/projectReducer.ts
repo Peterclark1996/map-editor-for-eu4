@@ -13,7 +13,7 @@ export type ActionProvinceUpdated = {
 
 export type ActionProvinceMapUpdated = {
     type: ProjectActionTypes.PROVINCE_MAP_UPDATED,
-    provinceMap: Buffer
+    provinceMap: Uint8Array
 }
 
 const projectReducer = (state: Project, action: ActionProvinceUpdated | ActionProvinceMapUpdated) => {

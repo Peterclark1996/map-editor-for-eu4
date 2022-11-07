@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from "electron"
 import * as path from "path"
 import * as fs from "fs"
 import { Project } from "../types/Project"
+import { convertTo24Bmp } from "./bmp"
 
 const createWindow = () => {
     const mainWindow = new BrowserWindow({
@@ -9,7 +10,7 @@ const createWindow = () => {
         width: 1800,
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false,
+            contextIsolation: false
         }
     })
     mainWindow.setMenuBarVisibility(false)
@@ -37,7 +38,7 @@ app.on("window-all-closed", () => {
     }
 })
 
-ipcMain.handle("fetch-default-project", async (_, args: string) => {
+ipcMain.handle("fetch-default-project", async (_, args: string): Promise<Project> => {
     const provinces = fs.readFileSync(`${args}/map/definition.csv`).toString().split("\n").map(row => {
         const parts = row.split(";")
         return {
@@ -53,6 +54,8 @@ ipcMain.handle("fetch-default-project", async (_, args: string) => {
     const provinceMap = fs.readFileSync(`${args}/map/provinces.bmp`)
 
     return {
+        width: 5632,
+        height: 2048,
         provinces,
         provinceMap
     }
@@ -65,7 +68,7 @@ type SaveModArgs = {
 }
 
 ipcMain.handle("save-mod", async (_, args: SaveModArgs) => {
-    const fileName = args.modName.toLowerCase().replace(/[^a-z_ ]/g, "").replace(/[ ]/g, "_")
+    const fileName = args.modName.toLowerCase().replace(/[^a-z0-9_ ]/g, "").replace(/[ ]/g, "_")
     const modPath = `${args.path}/mod/${fileName}`
 
     if (!fs.existsSync(modPath)) {
@@ -88,4 +91,8 @@ ipcMain.handle("save-mod", async (_, args: SaveModArgs) => {
         args.project.provinces.map(p => `${p.id};${p.colour.red};${p.colour.green};${p.colour.blue};${p.name};x`).join("\n")
 
     fs.writeFileSync(`${modPath}/map/definition.csv`, definitionFile)
+
+    const provinceMap = Buffer.from(convertTo24Bmp(args.project.provinceMap, args.project.width, args.project.height))
+
+    fs.writeFileSync(`${modPath}/map/provinces.bmp`, provinceMap)
 })

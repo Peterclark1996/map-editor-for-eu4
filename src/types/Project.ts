@@ -1,6 +1,8 @@
 import { Province } from "./Province"
 
 export type Project = {
+    width: number,
+    height: number,
     provinces: Province[]
-    provinceMap: Buffer
+    provinceMap: Uint8Array
 }

@@ -85,11 +85,11 @@ const Map = ({ projectState, projectDispatch, interfaceState, interfaceDispatch 
         ctx.fillStyle = `rgb(${interfaceState.provinceColour.red}, ${interfaceState.provinceColour.green}, ${interfaceState.provinceColour.blue})`
         ctx.fillRect(x - Math.floor(interfaceState.toolSize / 2), y - Math.floor(interfaceState.toolSize / 2), interfaceState.toolSize, interfaceState.toolSize)
 
-        const buffer = Buffer.from(new Uint8Array(ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer))
-        projectDispatch({ type: ProjectActionTypes.PROVINCE_MAP_UPDATED, provinceMap: buffer })
+        const provinceMap = new Uint8Array(ctx.getImageData(0, 0, projectState.width, projectState.height).data.buffer)
+        projectDispatch({ type: ProjectActionTypes.PROVINCE_MAP_UPDATED, provinceMap })
 
         draw(canvas, backCanvas)
-    }, [cameraOffset.x, cameraOffset.y, cameraZoom, projectDispatch, draw, interfaceState.provinceColour, interfaceState.toolSize])
+    }, [interfaceState.provinceColour, interfaceState.toolSize, cameraOffset.x, cameraOffset.y, cameraZoom, projectState.width, projectState.height, projectDispatch, draw])
 
     const onMouseDown = useCallback((e: MouseEvent) => {
         const canvas = canvasRef.current
