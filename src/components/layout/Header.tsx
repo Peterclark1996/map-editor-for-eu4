@@ -7,15 +7,16 @@ import SaveForm from "../SaveForm"
 import ToolButton from "../ToolButton"
 import classes from "./Header.module.scss"
 import { Project } from "../../types/Project"
+import { HostState } from "../../types/HostState"
 
 type HeaderProps = {
-    path: string
+    hostState: HostState
     project: Project
     interfaceState: InterfaceState
     interfaceDispatch: (action: InterfaceAction) => void
 }
 
-const Header = ({ path, project, interfaceState, interfaceDispatch }: HeaderProps) => {
+const Header = ({ hostState, project, interfaceState, interfaceDispatch }: HeaderProps) => {
     const [isShowingSaveOverlay, setIsShowingSaveOverlay] = useState(false)
 
     const toolSizes = [1, 2, 4, 8]
@@ -64,7 +65,7 @@ const Header = ({ path, project, interfaceState, interfaceDispatch }: HeaderProp
             {
                 isShowingSaveOverlay &&
                 <Overlay onOutsideClick={onClose}>
-                    <SaveForm project={project} path={path} onClose={onClose} />
+                    <SaveForm project={project} hostState={hostState} onClose={onClose} />
                 </Overlay>
             }
         </div>

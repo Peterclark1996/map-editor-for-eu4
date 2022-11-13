@@ -69,7 +69,7 @@ type SaveModArgs = {
 
 ipcMain.handle("save-mod", async (_, args: SaveModArgs) => {
     const fileName = args.modName.toLowerCase().replace(/[^a-z0-9_ ]/g, "").replace(/[ ]/g, "_")
-    const modPath = `${args.path}/mod/${fileName}`
+    const modPath = `${args.path}/${fileName}`
 
     if (!fs.existsSync(modPath)) {
         fs.mkdirSync(modPath)
@@ -77,9 +77,9 @@ ipcMain.handle("save-mod", async (_, args: SaveModArgs) => {
 
     const descriptorFile =
         `name = "${args.modName}"\n` +
-        `path = "mod/${fileName}"\n` +
         `supported_version = "1.9"`
 
+    fs.writeFileSync(`${modPath}.mod`, descriptorFile + `\npath = "mod/${fileName}"`)
     fs.writeFileSync(`${modPath}/descriptor.mod`, descriptorFile)
 
     if (!fs.existsSync(`${modPath}/map`)) {

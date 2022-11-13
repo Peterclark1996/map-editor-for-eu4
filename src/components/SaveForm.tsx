@@ -3,14 +3,15 @@ import Button from "./Button"
 import classes from "./SaveForm.module.scss"
 import { ipcRenderer } from "electron"
 import { Project } from "../types/Project"
+import { HostState } from "../types/HostState"
 
 type SaveFormProps = {
     project: Project
-    path: string,
+    hostState: HostState,
     onClose: () => void
 }
 
-const SaveForm = ({ project, path, onClose }: SaveFormProps) => {
+const SaveForm = ({ project, hostState, onClose }: SaveFormProps) => {
     const [name, setName] = useState("")
     const [isSaving, setIsSaving] = useState(false)
     const [hasSaved, setHasSaved] = useState(false)
@@ -22,7 +23,7 @@ const SaveForm = ({ project, path, onClose }: SaveFormProps) => {
         setIsSaving(true)
 
         ipcRenderer.invoke("save-mod", {
-            path,
+            path: hostState.modPath,
             modName: name,
             project
         })
