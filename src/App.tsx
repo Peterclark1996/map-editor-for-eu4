@@ -27,7 +27,7 @@ const App = () => {
                     <div className="me-2">Game folder:</div>
                     <input className={classes.input} value={gamePath} onChange={event => setGamePath(event.target.value)} />
                 </div>
-                <div className="d-flex w-100 justify-content-between">
+                <div className="d-flex w-100 justify-content-between mt-2">
                     <div className="me-2">Mod folder:</div>
                     <input className={classes.input} value={modPath} onChange={event => setModPath(event.target.value)} />
                 </div>

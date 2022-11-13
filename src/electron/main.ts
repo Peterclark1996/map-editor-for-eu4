@@ -3,6 +3,7 @@ import * as path from "path"
 import * as fs from "fs"
 import { Project } from "../types/Project"
 import { convertTo24Bmp } from "./bmp"
+import { LauncherSettings } from "../types/LauncherSettings"
 
 const createWindow = () => {
     const mainWindow = new BrowserWindow({
@@ -38,8 +39,8 @@ app.on("window-all-closed", () => {
     }
 })
 
-ipcMain.handle("fetch-default-project", async (_, args: string): Promise<Project> => {
-    const provinces = fs.readFileSync(`${args}/map/definition.csv`).toString().split("\n").map(row => {
+ipcMain.handle("fetch-default-project", async (_, path: string): Promise<Project> => {
+    const provinces = fs.readFileSync(`${path}/map/definition.csv`).toString().split("\n").map(row => {
         const parts = row.split(";")
         return {
             id: parseInt(parts[0]),
@@ -51,9 +52,12 @@ ipcMain.handle("fetch-default-project", async (_, args: string): Promise<Project
             name: parts[4]
         }
     }).slice(1)
-    const provinceMap = fs.readFileSync(`${args}/map/provinces.bmp`)
+    const provinceMap = fs.readFileSync(`${path}/map/provinces.bmp`)
+
+    const launcherSettings: LauncherSettings = JSON.parse(fs.readFileSync(`${path}/launcher-settings.json`).toString())
 
     return {
+        gameVersion: launcherSettings.rawVersion,
         width: 5632,
         height: 2048,
         provinces,
@@ -77,7 +81,7 @@ ipcMain.handle("save-mod", async (_, args: SaveModArgs) => {
 
     const descriptorFile =
         `name = "${args.modName}"\n` +
-        `supported_version = "1.9"`
+        `supported_version = "${args.project.gameVersion}"`
 
     fs.writeFileSync(`${modPath}.mod`, descriptorFile + `\npath = "mod/${fileName}"`)
     fs.writeFileSync(`${modPath}/descriptor.mod`, descriptorFile)
