@@ -11,6 +11,7 @@ import interfaceReducer, { InterfaceActionTypes } from "../../actions/interfaceR
 import { defaultInterfaceState } from "../../types/InterfaceState"
 import { MapMode } from "../../enums/MapMode"
 import { HostState } from "../../types/HostState"
+import InspectorHeader from "./InspectorHeader"
 
 type LoadedProjectProps = {
     initialProject: Project
@@ -34,6 +35,7 @@ const LoadedProject = ({ initialProject, hostState }: LoadedProjectProps) => {
                 interfaceState={interfaceState}
                 interfaceDispatch={interfaceDispatch}
             />
+            <InspectorHeader />
             <Inspector provinces={projectState.provinces} selectedProvinceColour={interfaceState.provinceColour} />
         </div>
     )
