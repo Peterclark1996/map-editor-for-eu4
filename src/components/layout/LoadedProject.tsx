@@ -13,12 +13,12 @@ import { MapMode } from "../../enums/MapMode"
 import { HostState } from "../../types/HostState"
 
 type LoadedProjectProps = {
-    defaultProject: Project
+    initialProject: Project
     hostState: HostState
 }
 
-const LoadedProject = ({ defaultProject, hostState }: LoadedProjectProps) => {
-    const [projectState, projectDispatch] = useReducer(projectReducer, defaultProject)
+const LoadedProject = ({ initialProject, hostState }: LoadedProjectProps) => {
+    const [projectState, projectDispatch] = useReducer(projectReducer, initialProject)
     const [interfaceState, interfaceDispatch] = useReducer(interfaceReducer, defaultInterfaceState)
 
     const onMapModeSelected = (mapMode: MapMode) => interfaceDispatch({ type: InterfaceActionTypes.MAP_MODE_UPDATED, mapMode })
