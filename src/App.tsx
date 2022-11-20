@@ -5,6 +5,7 @@ import { Project } from "./types/Project"
 import { ipcRenderer } from "electron"
 import ErrorBox from "./components/ErrorBox"
 import Button from "./components/Button"
+import { IpcEvents } from "./types/IpcEvents"
 
 const App = () => {
     const [gamePath, setGamePath] = useState<string>("D:/Steam/steamapps/common/Europa Universalis IV")
@@ -17,16 +18,16 @@ const App = () => {
     const hostState = { gamePath, modPath }
 
     const fetchNewProject = () =>
-        ipcRenderer.invoke("fetch-new-project", gamePath)
+        ipcRenderer.invoke(IpcEvents.FETCH_NEW_PROJECT, gamePath)
             .then(setInitialProject)
             .catch(() => setErrorMessage("Failed to create new project"))
 
     const fetchModProject = (modName: string) =>
-        ipcRenderer.invoke("fetch-mod-project", modPath + "/" + modName)
+        ipcRenderer.invoke(IpcEvents.FETCH_MOD_PROJECT, modPath + "/" + modName)
             .then(setInitialProject)
             .catch(() => setErrorMessage("Failed to load mod"))
 
-    const loadMods = () => ipcRenderer.invoke("fetch-mods", modPath).then(mods => {
+    const loadMods = () => ipcRenderer.invoke(IpcEvents.FETCH_MODS, modPath).then(mods => {
         setMods(mods)
         setErrorMessage(undefined)
         setLastSuccessfulModPath(modPath)

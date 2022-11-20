@@ -30,4 +30,21 @@ export const saveMod = (path: string, modName: string, project: Project) => {
     const provinceMap = Buffer.from(convertTo24Bmp(project.provinceMap, project.width, project.height))
 
     fs.writeFileSync(`${modPath}/map/provinces.bmp`, provinceMap)
+
+    const areaProvinces: { [name: string]: number[] } = {}
+    for (const key of project.areas) {
+        areaProvinces[key.id] = []
+    }
+
+    project.provinces.forEach(p => {
+        if (!p.area) return
+        areaProvinces[p.area].push(p.id)
+    })
+
+    const areaFile = project.areas.map(a => {
+        const colourString = a.colour ? `color = { ${a.colour?.red} ${a.colour?.green} ${a.colour?.blue} } ` : ""
+        return `${a.id} = { ${colourString}${areaProvinces[a.id].join(" ")} }`
+    }).reduce((a, line) => a + "\n" + line)
+
+    fs.writeFileSync(`${modPath}/map/area.txt`, areaFile)
 }

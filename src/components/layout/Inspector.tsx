@@ -32,6 +32,9 @@ const Inspector = ({ provinces, selectedProvinceColour }: InspectorProps) => {
                 <div>
                     <span className="fw-bold">Province:</span> {selectedProvince.name}
                 </div>
+                <div>
+                    <span className="fw-bold">Area:</span> {selectedProvince.area}
+                </div>
             </>
         )
     }

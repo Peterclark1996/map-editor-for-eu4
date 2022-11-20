@@ -6,6 +6,7 @@ import { LauncherSettings } from "../types/LauncherSettings"
 import { fetchFromPath } from "./fetchData"
 import { saveMod } from "./saveData"
 import { cleanString, normalisePath } from "./string"
+import { IpcEvents } from "../types/IpcEvents"
 
 const createWindow = () => {
     const mainWindow = new BrowserWindow({
@@ -41,12 +42,12 @@ app.on("window-all-closed", () => {
     }
 })
 
-ipcMain.handle("fetch-new-project", async (_, path: string): Promise<Project> => {
+ipcMain.handle(IpcEvents.FETCH_NEW_PROJECT, async (_, path: string): Promise<Project> => {
     const launcherSettings: LauncherSettings = JSON.parse(fs.readFileSync(`${path}/launcher-settings.json`).toString())
     return await fetchFromPath(path, launcherSettings.rawVersion)
 })
 
-ipcMain.handle("fetch-mod-project", async (_, path: string): Promise<Project> => {
+ipcMain.handle(IpcEvents.FETCH_MOD_PROJECT, async (_, path: string): Promise<Project> => {
     const cleanPath = normalisePath(path)
     const modFile = fs.readFileSync(`${cleanPath}.mod`).toString().split("\n").map(line => line.split("=").map(part => cleanString(part)))
     const modpath: (string | undefined) = modFile.find(line => line[0] == "path")?.[1]
@@ -61,7 +62,7 @@ ipcMain.handle("fetch-mod-project", async (_, path: string): Promise<Project> =>
     return await fetchFromPath(actualPath, gameVersion)
 })
 
-ipcMain.handle("fetch-mods", async (_, path: string): Promise<string[]> =>
+ipcMain.handle(IpcEvents.FETCH_MODS, async (_, path: string): Promise<string[]> =>
     fs.readdirSync(path)
         .filter(file => file.endsWith(".mod"))
         .map(file => file.slice(0, -4))

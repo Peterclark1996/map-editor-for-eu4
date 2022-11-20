@@ -1,3 +1,4 @@
+import { Area } from "./Area"
 import { Province } from "./Province"
 
 export type Project = {
@@ -6,4 +7,5 @@ export type Project = {
     height: number
     provinces: Province[]
     provinceMap: Uint8Array
+    areas: Area[]
 }
