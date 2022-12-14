@@ -1,5 +1,4 @@
 import Header from "./Header"
-import Inspector from "./Inspector"
 import Map from "./Map"
 import classes from "./LoadedProject.module.scss"
 import MapModes from "./MapModes"
@@ -11,7 +10,8 @@ import interfaceReducer, { InterfaceActionTypes } from "../../actions/interfaceR
 import { defaultInterfaceState } from "../../types/InterfaceState"
 import { MapMode } from "../../enums/MapMode"
 import { HostState } from "../../types/HostState"
-import InspectorHeader from "./InspectorHeader"
+import InspectorHeader from "../Inspector/InspectorHeader"
+import Inspector from "../Inspector/Inspector"
 
 type LoadedProjectProps = {
     initialProject: Project
@@ -22,13 +22,22 @@ const LoadedProject = ({ initialProject, hostState }: LoadedProjectProps) => {
     const [projectState, projectDispatch] = useReducer(projectReducer, initialProject)
     const [interfaceState, interfaceDispatch] = useReducer(interfaceReducer, defaultInterfaceState)
 
-    const onMapModeSelected = (mapMode: MapMode) => interfaceDispatch({ type: InterfaceActionTypes.MAP_MODE_UPDATED, mapMode })
+    const onMapModeSelected = (mapMode: MapMode) =>
+        interfaceDispatch({ type: InterfaceActionTypes.MAP_MODE_UPDATED, mapMode })
 
     return (
         <div className={`${classes.container} h-100`}>
             <Info />
-            <Header project={projectState} hostState={hostState} interfaceState={interfaceState} interfaceDispatch={interfaceDispatch} />
-            <MapModes selectedMapMode={interfaceState.mapMode} onMapModeSelected={onMapModeSelected} />
+            <Header
+                project={projectState}
+                hostState={hostState}
+                interfaceState={interfaceState}
+                interfaceDispatch={interfaceDispatch}
+            />
+            <MapModes
+                selectedMapMode={interfaceState.mapMode}
+                onMapModeSelected={onMapModeSelected}
+            />
             <Map
                 projectState={projectState}
                 projectDispatch={projectDispatch}
@@ -36,7 +45,11 @@ const LoadedProject = ({ initialProject, hostState }: LoadedProjectProps) => {
                 interfaceDispatch={interfaceDispatch}
             />
             <InspectorHeader />
-            <Inspector provinces={projectState.provinces} selectedProvinceColour={interfaceState.provinceColour} />
+            <Inspector
+                project={projectState}
+                projectDispatch={projectDispatch}
+                selectedProvinceColour={interfaceState.provinceColour}
+            />
         </div>
     )
 }

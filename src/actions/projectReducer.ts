@@ -1,29 +1,34 @@
 import { Project } from "../types/Project"
-import { Province } from "../types/Province"
 
 export enum ProjectActionTypes {
-    PROVINCE_UPDATED,
     PROVINCE_MAP_UPDATED,
-}
-
-export type ActionProvinceUpdated = {
-    type: ProjectActionTypes.PROVINCE_UPDATED,
-    province: Province
+    PROVINCE_AREA_UPDATED
 }
 
 export type ActionProvinceMapUpdated = {
-    type: ProjectActionTypes.PROVINCE_MAP_UPDATED,
+    type: ProjectActionTypes.PROVINCE_MAP_UPDATED
     provinceMap: Uint8Array
 }
 
-const projectReducer = (state: Project, action: ActionProvinceUpdated | ActionProvinceMapUpdated) => {
+export type ActionProvinceAreaUpdated = {
+    type: ProjectActionTypes.PROVINCE_AREA_UPDATED
+    provinceId: number
+    area: string | undefined
+}
+
+export type ProjectAction = ActionProvinceMapUpdated | ActionProvinceAreaUpdated
+
+const projectReducer = (state: Project, action: ProjectAction) => {
     switch (action.type) {
-        case ProjectActionTypes.PROVINCE_UPDATED:
+        case ProjectActionTypes.PROVINCE_AREA_UPDATED:
             return {
                 ...state,
                 provinces: state.provinces.map(province => {
-                    if (province.id === action.province.id) {
-                        return action.province
+                    if (province.id === action.provinceId) {
+                        return {
+                            ...province,
+                            area: action.area
+                        }
                     }
                     return province
                 })

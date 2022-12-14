@@ -11,26 +11,30 @@ export enum InterfaceActionTypes {
 }
 
 export type ActionProvinceColourUpdated = {
-    type: InterfaceActionTypes.PROVINCE_COLOUR_UPDATED,
+    type: InterfaceActionTypes.PROVINCE_COLOUR_UPDATED
     colour: Colour
 }
 
 export type ActionToolUpdated = {
-    type: InterfaceActionTypes.TOOL_UPDATED,
+    type: InterfaceActionTypes.TOOL_UPDATED
     tool: Tool
 }
 
 export type ActionToolSizeUpdated = {
-    type: InterfaceActionTypes.TOOL_SIZE_UPDATED,
+    type: InterfaceActionTypes.TOOL_SIZE_UPDATED
     toolSize: number
 }
 
 export type ActionMapModeUpdated = {
-    type: InterfaceActionTypes.MAP_MODE_UPDATED,
+    type: InterfaceActionTypes.MAP_MODE_UPDATED
     mapMode: MapMode
 }
 
-export type InterfaceAction = ActionProvinceColourUpdated | ActionToolUpdated | ActionToolSizeUpdated | ActionMapModeUpdated
+export type InterfaceAction =
+    | ActionProvinceColourUpdated
+    | ActionToolUpdated
+    | ActionToolSizeUpdated
+    | ActionMapModeUpdated
 
 const interfaceReducer = (state: InterfaceState, action: InterfaceAction) => {
     switch (action.type) {
